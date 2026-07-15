@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="The Hole in Every Map — an interactive visual explanation of Gödel's incompleteness theorem."
+    />
+    <meta name="theme-color" content="#07070a" />
+    <title>The Hole in Every Map — Gödel's Incompleteness Theorem</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%2307070a'/%3E%3Ccircle cx='32' cy='32' r='27' fill='none' stroke='%23ff3f54'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Georgia,serif' font-size='31' fill='%23eee9dc'%3EG%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+    <script src="instruments.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#machine">Skip to the proof machine</a>
+
+    <canvas id="symbol-field" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="cursor-halo" aria-hidden="true"></div>
+    <aside class="life-thread" id="life-thread" aria-hidden="true">
+      <svg id="life-thread-svg" role="presentation"></svg>
+    </aside>
+
+    <header class="masthead" aria-label="Primary navigation">
+      <a class="identity" href="#top" aria-label="The Hole in Every Map, back to top">
+        <span class="identity-mark" aria-hidden="true">G</span>
+        <span class="identity-copy">
+          <strong>THE HOLE IN EVERY MAP</strong>
+          <small>GÖDEL / 1931</small>
+        </span>
+      </a>
+
+      <div class="masthead-actions">
+        <button class="text-button" id="motion-toggle" type="button" aria-label="Motion" aria-pressed="true">
+          MOTION <span aria-hidden="true">ON</span>
+        </button>
+        <button class="text-button" type="button" data-open-precision>
+          PRECISION <span aria-hidden="true">↗</span>
+        </button>
+        <a class="enter-link" href="#machine">ENTER <span aria-hidden="true">↓</span></a>
+      </div>
+    </header>
+
+    <main id="top" tabindex="-1">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-index" aria-hidden="true">
+          <span>FORMAL SYSTEM / T</span>
+          <span>CONSISTENCY / ASSUMED</span>
+          <span>VIEWPOINT / OUTSIDE</span>
+        </div>
+
+        <div class="hero-copy">
+          <p class="kicker"><span>01</span> A VISUAL PROOF OF A LIMIT</p>
+          <p class="dedication-line">A LOVE LETTER TO KURT GÖDEL · 1906–1978</p>
+          <h1 id="hero-title">
+            <span>GÖDEL’S THEOREM</span>
+            <span>IS PROVEN.</span>
+          </h1>
+          <p class="hero-turn">
+            COMPLETENESS
+            <em>IS WHAT FAILS.</em>
+          </p>
+          <p class="hero-deck">
+            Some truths cannot be reached from inside any one consistent,
+            mechanical system strong enough to describe arithmetic.
+          </p>
+        </div>
+
+        <div class="hero-orbit" aria-hidden="true">
+          <svg viewBox="0 0 640 640" role="presentation">
+            <defs>
+              <path
+                id="hero-orbit-path"
+                d="M 320,320 m -244,0 a 244,244 0 1,1 488,0 a 244,244 0 1,1 -488,0"
+              />
+              <filter id="hero-glow" x="-100%" y="-100%" width="300%" height="300%">
+                <feGaussianBlur stdDeviation="9" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <circle class="orbit-thin orbit-a" cx="320" cy="320" r="270" />
+            <circle class="orbit-dashed orbit-b" cx="320" cy="320" r="224" />
+            <circle class="orbit-thin orbit-c" cx="320" cy="320" r="162" />
+            <circle class="orbit-gap" cx="320" cy="320" r="92" />
+            <g class="orbit-ticks"></g>
+            <text class="orbit-copy">
+              <textPath href="#hero-orbit-path" startOffset="0%">
+                AXIOMS — INFERENCE — ARITHMETIC — ENCODING — PROVABILITY — SELF-REFERENCE —
+              </textPath>
+            </text>
+            <g class="hero-glyph" filter="url(#hero-glow)">
+              <circle cx="320" cy="320" r="8" />
+              <text x="320" y="305">G</text>
+              <text class="glyph-caption" x="320" y="346">NOT PROVABLE HERE</text>
+            </g>
+          </svg>
+        </div>
+
+        <a class="descent" href="#orientation">
+          <span>DESCEND INTO THE SYSTEM</span>
+          <span class="descent-line" aria-hidden="true"></span>
+        </a>
+      </section>
+
+      <section class="life-node life-node--roots" data-life="roots" aria-labelledby="life-roots-title">
+        <div class="life-node-mark" aria-hidden="true"></div>
+        <p class="life-year">ROOTS — 1906 · BRÜNN</p>
+        <p id="life-roots-title">
+          A boy asks <em>why?</em> so often his family calls him <strong>der Herr Warum</strong> —
+          Mr. Why. At six, he survives rheumatic fever. Illness, and fear of illness, remain part
+          of his life.
+        </p>
+      </section>
+
+      <p class="tree-bridge">
+        A FORMULA HAS A SYNTAX TREE. A PROOF CAN BE DRAWN AS A TREE OF INFERENCES.
+        A THEORY GROWS FROM ITS AXIOMS.
+      </p>
+
+      <section class="orientation" id="orientation" aria-labelledby="orientation-title">
+        <div class="orientation-count" aria-hidden="true">00</div>
+        <p class="section-label">FIRST, MOVE THE DISTURBANCE</p>
+        <h2 id="orientation-title">
+          “Unprovable” is not absolute.
+          <span>It means: unreachable from these axioms, by these rules.</span>
+        </h2>
+        <div class="orientation-grid">
+          <p>
+            Gödel did not fail to prove his theorem. He proved—using reasoning
+            outside a chosen formal system—that the system has an inside edge.
+          </p>
+          <p>
+            The experience below lets you build that edge, turn arithmetic into
+            a mirror, and watch every attempted escape redraw the horizon.
+          </p>
+        </div>
+      </section>
+
+      <section class="life-node" data-life="vienna" aria-labelledby="life-vienna-title">
+        <div class="life-node-mark" aria-hidden="true"></div>
+        <p class="life-year">1924 · VIENNA</p>
+        <p id="life-vienna-title">
+          He sits with the sharpest logicians alive. By 1929 he has proved logic can reach every
+          truth its models share — then turns to what no single formal arithmetic can settle.
+        </p>
+      </section>
+
+      <section class="numbering-section" id="numbering" aria-labelledby="numbering-title">
+        <div class="instrument-heading">
+          <div>
+            <p class="section-label">FIRST, MAKE CONTACT</p>
+            <h2 id="numbering-title">GIVE THE MARKS A NUMBER.</h2>
+          </div>
+          <p>
+            Gödel’s first move was brutally concrete: make syntax available to arithmetic.
+            Type a finite symbol string. This instrument assigns it an exact integer.
+          </p>
+        </div>
+
+        <div class="numbering-shell">
+          <div class="numbering-console">
+            <label class="instrument-label" for="godel-input">SYMBOL STRING / MAX 120</label>
+            <input
+              class="godel-input"
+              id="godel-input"
+              type="text"
+              value="∀x(x+0=x)"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              aria-describedby="godel-code-help godel-input-error"
+            />
+            <p class="input-error" id="godel-input-error" aria-live="polite"></p>
+
+            <div class="symbol-palette" id="symbol-palette" aria-label="Insert a formal symbol">
+              <button type="button" data-symbol="0">0<small>1</small></button>
+              <button type="button" data-symbol="S">S<small>2</small></button>
+              <button type="button" data-symbol="+">+<small>3</small></button>
+              <button type="button" data-symbol="·">·<small>4</small></button>
+              <button type="button" data-symbol="=">=<small>5</small></button>
+              <button type="button" data-symbol="¬">¬<small>6</small></button>
+              <button type="button" data-symbol="∧">∧<small>7</small></button>
+              <button type="button" data-symbol="∨">∨<small>8</small></button>
+              <button type="button" data-symbol="→">→<small>9</small></button>
+              <button type="button" data-symbol="∀">∀<small>10</small></button>
+              <button type="button" data-symbol="∃">∃<small>11</small></button>
+              <button type="button" data-symbol="(">(<small>12</small></button>
+              <button type="button" data-symbol=")">)<small>13</small></button>
+              <button type="button" data-symbol="x">x<small>14</small></button>
+              <button type="button" data-symbol="y">y<small>15</small></button>
+              <button type="button" data-symbol="z">z<small>16</small></button>
+            </div>
+            <p class="alias-help" id="godel-code-help">ALIASES: A. → ∀ · E. → ∃ · -&gt; → → · ~ → ¬ · &amp; → ∧ · * → ·</p>
+
+            <div class="encoding-readouts">
+              <div class="encoding-block">
+                <span>01 / SYMBOL CODES</span>
+                <div class="symbol-code-row" id="symbol-code-row"></div>
+              </div>
+              <div class="encoding-block">
+                <span>02 / PRIME-POWER ENCODING</span>
+                <code class="prime-expression" id="prime-expression"></code>
+              </div>
+              <div class="encoding-block encoding-block--digits">
+                <span>03 / DECIMAL EXPANSION</span>
+                <p class="digit-headline" id="digit-headline" aria-live="polite"></p>
+                <p class="digit-wall" id="digit-wall" aria-hidden="true"></p>
+                <button class="inline-action" id="digit-expander" type="button" hidden>SHOW ALL DIGITS ↓</button>
+              </div>
+            </div>
+
+            <div class="factor-controls">
+              <button class="instrument-button" id="factor-back" type="button">FACTOR IT BACK <span aria-hidden="true">↙</span></button>
+              <p class="factor-result" id="factor-result">WAITING FOR THE NUMBER.</p>
+              <span class="sr-only" id="factor-announcer" aria-live="polite" aria-atomic="true"></span>
+            </div>
+          </div>
+
+          <div class="syntax-beat" id="syntax-beat">
+            <div class="syntax-topline">
+              <span>A FORMULA HAS A TREE</span>
+              <span>SEPARATE EXAMPLE</span>
+            </div>
+            <p class="syntax-formula">S0 + 0 = S0</p>
+            <svg id="syntax-tree" viewBox="0 0 560 430" role="img" aria-labelledby="syntax-title syntax-desc">
+              <title id="syntax-title">The syntax tree of S0 plus 0 equals S0</title>
+              <desc id="syntax-desc">Tokens assemble into a tree and then receive a Gödel-style number.</desc>
+              <g id="syntax-tree-edges"></g>
+              <g id="syntax-tree-nodes"></g>
+            </svg>
+            <p class="syntax-number" id="syntax-number" aria-live="polite"></p>
+            <button class="instrument-button instrument-button--dark" id="syntax-step" type="button">ASSEMBLE <span aria-hidden="true">▸</span></button>
+          </div>
+        </div>
+
+        <p class="honesty-caption">
+          This is one Gödel-style numbering, not the only one. It does not check whether your
+          string is well-formed or true — it shows the number this encoding assigns to your marks.
+        </p>
+      </section>
+
+      <section class="life-node life-node--ember" data-life="konigsberg" aria-labelledby="life-konigsberg-title">
+        <div class="life-node-mark" aria-hidden="true"></div>
+        <p class="life-year">SEPT 1930 · KÖNIGSBERG</p>
+        <p id="life-konigsberg-title">
+          He remarks, almost in passing, that a fixed formal arithmetic leaves sentences undecided.
+          The next morning Hilbert declares: <em>“We must know — we will know.”</em> Gödel has drawn
+          a line through one formal version of that promise: assign every finite symbol string —
+          and every proof — a number.
+        </p>
+      </section>
+
+      <section class="machine-section" id="machine" tabindex="-1" aria-labelledby="machine-heading">
+        <div class="machine-heading-row">
+          <div>
+            <p class="section-label">INTERACTIVE EXPLANATORY MODEL</p>
+            <h2 id="machine-heading">THE SELF-REFERENCE ENGINE</h2>
+          </div>
+          <div class="machine-coordinate" aria-hidden="true">
+            <span>VIEW / META</span>
+            <span>MODE / EXPLANATORY</span>
+            <span id="clock-readout">00:00:00</span>
+          </div>
+        </div>
+
+        <div class="machine-shell" data-state="seal">
+          <div class="machine-stage" id="machine-stage">
+            <div class="stage-grid" aria-hidden="true"></div>
+
+            <div class="stage-readout stage-readout--top" aria-hidden="true">
+              <span id="system-readout">SYSTEM T₀</span>
+              <span id="stage-status">BOUNDARY OPEN</span>
+            </div>
+
+            <svg
+              class="proof-map"
+              id="proof-map"
+              viewBox="0 0 900 900"
+              role="img"
+              aria-labelledby="proof-map-title proof-map-desc"
+            >
+              <title id="proof-map-title">A visual model of a formal proof system</title>
+              <desc id="proof-map-desc">
+                A network of axioms and proofs surrounds a central sentence. The display changes
+                across seven steps to show encoding, self-reference, incompleteness, and nested systems.
+              </desc>
+              <defs>
+                <radialGradient id="core-fill" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="currentColor" stop-opacity="0.18" />
+                  <stop offset="65%" stop-color="currentColor" stop-opacity="0.05" />
+                  <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
+                </radialGradient>
+                <filter id="soft-glow" x="-100%" y="-100%" width="300%" height="300%">
+                  <feGaussianBlur stdDeviation="5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+                <filter id="hard-glow" x="-100%" y="-100%" width="300%" height="300%">
+                  <feGaussianBlur stdDeviation="13" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+                <path
+                  id="proof-orbit-path"
+                  d="M 450,450 m -347,0 a 347,347 0 1,1 694,0 a 347,347 0 1,1 -694,0"
+                />
+                <path
+                  id="number-orbit-path"
+                  d="M 450,450 m -286,0 a 286,286 0 1,0 572,0 a 286,286 0 1,0 -572,0"
+                />
+              </defs>
+
+              <g class="system-rings" aria-hidden="true">
+                <circle class="boundary boundary--outer" cx="450" cy="450" r="368" />
+                <circle class="boundary boundary--middle" cx="450" cy="450" r="308" />
+                <circle class="boundary boundary--inner" cx="450" cy="450" r="211" />
+                <circle class="boundary boundary--pulse" cx="450" cy="450" r="102" />
+                <text class="ring-copy">
+                  <textPath href="#proof-orbit-path" startOffset="2%">
+                    SYSTEM T · EFFECTIVE AXIOMS · EXACT RULES · ENOUGH ARITHMETIC · CONSISTENCY ASSUMED ·
+                  </textPath>
+                </text>
+              </g>
+
+              <g id="proof-web" class="proof-web" aria-hidden="true"></g>
+              <g id="axiom-labels" class="axiom-labels" aria-hidden="true"></g>
+
+              <g class="number-layer" aria-hidden="true">
+                <text class="number-stream">
+                  <textPath href="#number-orbit-path" startOffset="0%">
+                    2 · 3 · 5 · 7 · 11 · 13 · 17 · 19 · 23 · 29 · 31 · 37 · 41 · 43 · 47 · 53 · 59 · 61 ·
+                  </textPath>
+                </text>
+                <g id="number-bars"></g>
+              </g>
+
+              <g class="mirror-layer" aria-hidden="true">
+                <path class="mirror-loop" d="M211 450C211 268 364 203 450 364C536 203 689 268 689 450C689 632 536 697 450 536C364 697 211 632 211 450Z" />
+                <text class="mirror-g mirror-g--ghost" x="488" y="479">G</text>
+                <text class="mirror-g" x="412" y="479">G</text>
+                <path class="mirror-slash" d="M450 370V530" />
+              </g>
+
+              <g class="dilemma-layer" aria-hidden="true">
+                <path class="branch branch--left" d="M450 450C385 450 338 450 278 450C230 450 205 422 178 382" />
+                <path class="branch branch--right" d="M450 450C515 450 562 450 622 450C670 450 695 478 722 518" />
+                <circle class="branch-end branch-end--left" cx="170" cy="370" r="13" />
+                <circle class="branch-end branch-end--right" cx="730" cy="530" r="13" />
+                <text id="branch-left-label" class="branch-label" x="98" y="337">T ⊢ G</text>
+                <text id="branch-right-label" class="branch-label" x="738" y="574">T ⊢ ¬R</text>
+              </g>
+
+              <g id="recursive-rings" class="recursive-rings" aria-hidden="true"></g>
+
+              <g class="core-node" aria-hidden="true">
+                <circle class="core-aura" cx="450" cy="450" r="92" />
+                <circle class="core-disc" cx="450" cy="450" r="52" />
+                <circle class="core-dot" cx="450" cy="450" r="5" />
+                <text id="core-symbol" class="core-symbol" x="450" y="435">T</text>
+                <text id="core-caption" class="core-caption" x="450" y="486">UNSEALED</text>
+              </g>
+
+              <g class="fracture-layer" aria-hidden="true">
+                <path d="M450 450L411 301L438 215L382 94" />
+                <path d="M450 450L572 369L705 388L814 327" />
+                <path d="M450 450L514 573L486 700L549 826" />
+                <path d="M450 450L314 524L207 501L85 574" />
+                <path d="M450 450L382 395L311 424" />
+              </g>
+            </svg>
+
+            <div class="stage-axis stage-axis--x" aria-hidden="true"><span>PROOF SPACE</span></div>
+            <div class="stage-axis stage-axis--y" aria-hidden="true"><span>META LEVEL</span></div>
+
+            <div class="stage-action" id="stage-action" aria-live="polite"></div>
+
+            <div class="stage-readout stage-readout--bottom" aria-hidden="true">
+              <span>PROOF LANTERN / POINTER</span>
+              <span id="derivation-readout">DERIVATION 000000</span>
+            </div>
+          </div>
+
+          <div class="machine-console">
+            <div class="step-track" role="tablist" aria-label="Proof sequence">
+              <button class="step-tab is-active" id="step-tab-0" type="button" role="tab" aria-selected="true" aria-controls="console-panel" data-step="0">
+                <span>01</span><small>WORLD</small>
+              </button>
+              <button class="step-tab" id="step-tab-1" type="button" role="tab" aria-selected="false" aria-controls="console-panel" data-step="1">
+                <span>02</span><small>NUMBER</small>
+              </button>
+              <button class="step-tab" id="step-tab-2" type="button" role="tab" aria-selected="false" aria-controls="console-panel" data-step="2">
+                <span>03</span><small>MIRROR</small>
+              </button>
+              <button class="step-tab" id="step-tab-3" type="button" role="tab" aria-selected="false" aria-controls="console-panel" data-step="3">
+                <span>04</span><small>PROVE</small>
+              </button>
+              <button class="step-tab" id="step-tab-4" type="button" role="tab" aria-selected="false" aria-controls="console-panel" data-step="4">
+                <span>05</span><small>ROSSER</small>
+              </button>
+              <button class="step-tab" id="step-tab-5" type="button" role="tab" aria-selected="false" aria-controls="console-panel" data-step="5">
+                <span>06</span><small>PATCH</small>
+              </button>
+              <button class="step-tab" id="step-tab-6" type="button" role="tab" aria-selected="false" aria-controls="console-panel" data-step="6">
+                <span>07</span><small>OUTSIDE</small>
+              </button>
+            </div>
+
+            <div class="console-copy" id="console-panel" role="tabpanel" aria-labelledby="step-tab-0" aria-live="polite" aria-atomic="true">
+              <p class="console-index" id="console-index">01 / BUILD A WORLD</p>
+              <h3 id="console-title">Give arithmetic a border.</h3>
+              <p class="console-body" id="console-body">
+                Call the system T. Its axioms can be mechanically listed, its rules are exact,
+                and it contains enough arithmetic to represent computations about encoded formulas
+                and proofs. Assume it is consistent.
+              </p>
+              <div class="formula-line">
+                <span aria-hidden="true">⌁</span>
+                <code id="console-formula">axioms + rules → every T-proof</code>
+              </div>
+              <p class="console-note" id="console-note">
+                Consistent means T never proves both φ and ¬φ.
+              </p>
+            </div>
+
+            <div class="console-controls">
+              <button class="control-button control-button--ghost" id="prev-step" type="button" disabled>
+                <span aria-hidden="true">←</span> PREVIOUS
+              </button>
+              <span class="step-fraction" id="step-fraction" aria-hidden="true">01 / 07</span>
+              <button class="control-button" id="next-step" type="button">
+                SEAL THE SYSTEM <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="life-interlude-pair" aria-label="Gödel's life from 1931 to Princeton">
+        <section class="life-node" data-life="sentence" aria-labelledby="life-sentence-title">
+          <div class="life-node-mark" aria-hidden="true"></div>
+          <p class="life-year">1931 · THE SENTENCE</p>
+          <p id="life-sentence-title">
+            He writes down the fixed-point construction at the heart of what you just walked
+            through. A sentence learns to say <em>no proof of me exists.</em> The map shows its hole.
+          </p>
+        </section>
+
+        <section class="life-node" data-life="eastward" aria-labelledby="life-eastward-title">
+          <div class="life-node-mark" aria-hidden="true"></div>
+          <p class="life-year">1940 · EASTWARD, TO GO WEST</p>
+          <p id="life-eastward-title">
+            With Adele Porkert, his wife and partner, he flees the war the long way: across
+            Siberia, across the Pacific, and eventually to Princeton.
+          </p>
+        </section>
+      </div>
+
+      <section class="life-node life-node--wide" data-life="walks" aria-labelledby="life-walks-title">
+        <div class="life-node-mark" aria-hidden="true"></div>
+        <p class="life-year">PRINCETON · THE WALKS</p>
+        <p id="life-walks-title">
+          Morgenstern recalled Einstein saying he came to the Institute mostly “to have the
+          privilege of walking home with Gödel.” Down tree-lined paths, the two argue about time.
+        </p>
+      </section>
+
+      <section class="grove-section" id="proof-grove" aria-labelledby="grove-title">
+        <section class="life-node" data-life="loophole" aria-labelledby="life-loophole-title">
+          <div class="life-node-mark" aria-hidden="true"></div>
+          <p class="life-year">1947 · THE LOOPHOLE</p>
+          <p id="life-loophole-title">
+            Studying for his citizenship test, Gödel becomes convinced he has found a legal path
+            from the U.S. Constitution to dictatorship. At the hearing, Einstein beside him, the
+            judge gently changes the subject.
+          </p>
+        </section>
+
+        <details class="grove-details" id="grove-details">
+          <summary>
+            <span>
+              <small>AN INTERLUDE, OPTIONAL</small>
+              <strong id="grove-title">ENTER THE PROOF GROVE</strong>
+            </span>
+            <span aria-hidden="true">＋</span>
+          </summary>
+
+          <div class="grove-body">
+            <p class="grove-intro">
+              A different, smaller system. Ten minutes of honest labor, if you want to feel the
+              wall with your hands.
+            </p>
+
+            <div class="grove-grid">
+              <section class="grove-panel" aria-labelledby="manual-grove-title">
+                <div class="grove-panel-heading">
+                  <div><span>MODE A</span><h3 id="manual-grove-title">DERIVE BY HAND</h3></div>
+                  <code id="miu-selected-readout">SELECTED / MI</code>
+                </div>
+                <div class="miu-rules" id="miu-rules" aria-label="MIU production rules">
+                  <button type="button" data-rule="I"><span>I</span><code>wI → wIU</code></button>
+                  <button type="button" data-rule="II"><span>II</span><code>Mw → Mww</code></button>
+                  <button type="button" data-rule="III"><span>III</span><code>III → U</code></button>
+                  <button type="button" data-rule="IV"><span>IV</span><code>UU → ε</code></button>
+                </div>
+                <div class="miu-tree" id="miu-tree">
+                  <svg id="miu-tree-edges" aria-hidden="true"></svg>
+                  <div id="miu-tree-nodes" role="group" aria-label="Hand-built MIU derivation tree"></div>
+                </div>
+                <p class="grove-help">Choose a node, then a rule. Every distinct one-step result grows as a child.</p>
+              </section>
+
+              <section class="grove-panel grove-panel--search" aria-labelledby="search-grove-title">
+                <div class="grove-panel-heading">
+                  <div><span>MODE B</span><h3 id="search-grove-title">ASK IT TO REACH MU</h3></div>
+                  <code id="miu-search-count">STRINGS VISITED / 00000</code>
+                  <span class="sr-only" id="miu-search-announcer" aria-live="polite" aria-atomic="true"></span>
+                </div>
+                <div class="miu-canopy">
+                  <canvas id="miu-canopy" aria-hidden="true"></canvas>
+                  <p class="canopy-target" aria-hidden="true">MU</p>
+                  <p class="canopy-root" aria-hidden="true">MI</p>
+                </div>
+                <p class="search-warning">ABSENCE IN SEARCH IS NOT THE PROOF.</p>
+                <div class="grove-actions">
+                  <button class="instrument-button instrument-button--dark" id="miu-search" type="button">BEGIN BOUNDED SEARCH</button>
+                  <button class="instrument-button instrument-button--ghost" id="miu-outside" type="button">STEP OUTSIDE</button>
+                </div>
+                <div class="miu-invariant" id="miu-invariant" hidden>
+                  <span>I-COUNT / MOD 3</span>
+                  <p><strong>MI begins at 1.</strong> Rules preserve 1 or 2 modulo 3. MU contains zero I’s.</p>
+                  <code>0 ∉ {1, 2}  →  MU IS UNDERIVABLE</code>
+                </div>
+              </section>
+            </div>
+
+            <p class="honesty-caption">
+              MIU is not Gödel’s system, and this is not incompleteness. MIU is decidable and has
+              no self-reference. It teaches the difference between searching inside and reasoning
+              outside. The search is the feeling; the invariant is the proof.
+            </p>
+          </div>
+        </details>
+      </section>
+
+      <section class="room-section" id="room" aria-labelledby="room-title">
+        <section class="life-node life-node--ember" data-life="time-curves" aria-labelledby="life-time-title">
+          <div class="life-node-mark" aria-hidden="true"></div>
+          <p class="life-year">1949 · TIME CURVES BACK</p>
+          <p id="life-time-title">
+            For Einstein’s seventieth birthday, Gödel offers a solution to relativity in which
+            paths through spacetime can return to their own past. In his universe, there is no
+            global before and after.
+          </p>
+        </section>
+
+        <div class="room-scroll">
+          <div class="room-frame" id="room-frame">
+            <p class="section-label">A SHORT DESCENT</p>
+            <h2 id="room-title" class="sr-only">The Room With No Door</h2>
+            <div class="room-lines" aria-live="off">
+              <p data-room-line="0">You are standing inside a system.</p>
+              <p data-room-line="1">Every wall is an axiom you <span class="redacted"><span aria-hidden="true">agreed</span><span class="sr-only">agreed</span></span> to.</p>
+              <p data-room-line="2">The system can treat your sentence as a number.</p>
+              <p data-room-line="3">There was never a door. <em>Only more room.</em></p>
+            </div>
+            <div class="room-coordinates" aria-hidden="true"><span>INSIDE / T</span><span>EXIT / UNDEFINED</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="epilogue" aria-labelledby="epilogue-title">
+        <section class="life-node life-node--winter" data-life="last-winter" aria-labelledby="life-winter-title">
+          <div class="life-node-mark" aria-hidden="true"></div>
+          <p class="life-year">1978 · THE LAST WINTER</p>
+          <p id="life-winter-title">
+            In his last years he feared poison and ate only what Adele prepared. When she was
+            hospitalized in 1977, he stopped eating. He died on January 14, 1978, weighing about
+            sixty-five pounds.
+          </p>
+          <p class="life-honesty">His illness was part of his life. It was not an illustration of his theorem.</p>
+        </section>
+
+        <div class="legacy-crown" aria-hidden="true">
+          <svg viewBox="0 0 760 760" role="presentation">
+            <path class="crown-trunk" d="M380 760C375 645 392 590 376 510C359 425 375 355 381 285" />
+            <path class="crown-branch crown-branch--1" d="M379 564C302 522 237 463 185 372C149 309 103 273 54 250" />
+            <path class="crown-branch crown-branch--2" d="M378 495C450 445 514 375 532 280C546 207 598 161 672 130" />
+            <path class="crown-branch crown-branch--3" d="M377 430C310 376 272 309 276 218C279 145 245 91 189 47" />
+            <path class="crown-branch crown-branch--4" d="M380 363C444 323 472 270 462 204C451 130 490 74 550 39" />
+            <path class="crown-return" d="M381 285C418 243 425 194 393 164C359 132 328 163 337 202C348 249 407 245 424 218" />
+            <circle class="crown-gap" cx="431" cy="209" r="5" />
+          </svg>
+          <span class="crown-label crown-label--1">LOGIC</span>
+          <span class="crown-label crown-label--2">SET THEORY</span>
+          <span class="crown-label crown-label--3">COSMOLOGY</span>
+          <span class="crown-label crown-label--4">PHILOSOPHY</span>
+          <p>THE CROWN DOES NOT CLOSE. IT ISN’T SUPPOSED TO.</p>
+        </div>
+        <p class="section-label">THE HORIZON RECURS</p>
+        <h2 id="epilogue-title">
+          YOU CAN PATCH
+          <span>THIS HOLE.</span>
+          YOU CANNOT SEAL
+          <span>THE PATTERN.</span>
+        </h2>
+        <p class="epilogue-deck">
+          Any system consistent enough not to contradict itself, mechanical enough to check,
+          and strong enough for arithmetic leaves some arithmetic question unanswered.
+        </p>
+        <dl class="self-audit" aria-label="Gödel's second incompleteness theorem">
+          <div><dt>DISPLAY HOST</dt><dd>this page</dd></div>
+          <div><dt>THEOREM TARGET</dt><dd>a suitable consistent, effectively axiomatized theory T</dd></div>
+          <div><dt>SCHEMA</dt><dd>Con(T) := ¬Prov<sub>T</sub>(⌜⊥⌝)</dd></div>
+          <div><dt>RESULT</dt><dd>T ⊬ Con(T)</dd></div>
+          <p>SUCH A SYSTEM CAN STATE ITS OWN CONSISTENCY. IT CANNOT PROVE IT.</p>
+          <small>This page is not T. No audit was performed. It only shows the form such a consistency sentence takes.</small>
+        </dl>
+        <button class="precision-cta" type="button" data-open-precision>
+          <span>SHOW THE FORMAL SPINE</span>
+          <span aria-hidden="true">↗</span>
+        </button>
+        <p class="last-line">
+          FROM THE OUTSIDE: A THEOREM. <span>FROM THE INSIDE: A HORIZON.</span>
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <span>THE HOLE IN EVERY MAP</span>
+      <span>FOR KURT GÖDEL — WHO WALKED HOME WITH EINSTEIN</span>
+      <a href="#top">RETURN TO ORIGIN ↑</a>
+    </footer>
+
+    <dialog class="precision-dialog" id="precision-dialog" aria-labelledby="precision-title">
+      <div class="dialog-topline">
+        <span>FORMAL SPINE / 06 LINKS</span>
+        <button class="dialog-close" type="button" aria-label="Close precision notes">×</button>
+      </div>
+      <div class="dialog-body">
+        <p class="section-label">WHAT THE VISUAL COMPRESSES</p>
+        <h2 id="precision-title">The machinery beneath the mirror.</h2>
+
+        <ol class="formal-spine">
+          <li>
+            <span>01</span>
+            <div><strong>EFFECTIVE AXIOMS</strong><p>T’s axioms are mechanically enumerable and its proofs mechanically checkable.</p></div>
+          </li>
+          <li>
+            <span>02</span>
+            <div><strong>ARITHMETIZATION</strong><p>Finite symbols, formulas, and proofs receive Gödel numbers.</p></div>
+          </li>
+          <li>
+            <span>03</span>
+            <div><strong>DIAGONALIZATION</strong><p>A fixed-point sentence G says that no number codes a T-proof of G.</p></div>
+          </li>
+          <li>
+            <span>04</span>
+            <div><strong>THE COLLISION</strong><p>If consistent T proved G, it would certify the very proof G denies.</p></div>
+          </li>
+          <li>
+            <span>05</span>
+            <div><strong>THE LIMIT</strong><p>Rosser’s refinement constructs a sentence R for which consistency alone rules out both R and ¬R.</p></div>
+          </li>
+          <li>
+            <span>06</span>
+            <div><strong>CONSISTENCY</strong><p>For a suitable consistent T and its standard provability predicate, T cannot prove its own formal consistency statement Con(T).</p></div>
+          </li>
+        </ol>
+
+        <div class="precision-grid">
+          <div>
+            <strong>THE HYPOTHESES MATTER</strong>
+            <p>Consistency, effective axiomatization, and enough elementary arithmetic are essential.</p>
+          </div>
+          <div>
+            <strong>“TRUE” NEEDS A VIEWPOINT</strong>
+            <p>Truth here refers to the standard natural numbers. Provability is always relative to a named system.</p>
+          </div>
+          <div>
+            <strong>NOT THE LIAR PARADOX</strong>
+            <p>G says it has no proof in T; it does not simply say “I am false.”</p>
+          </div>
+          <div>
+            <strong>NO VIEW FROM NOWHERE</strong>
+            <p>A formalized metatheory strong enough for arithmetic inherits a boundary of its own.</p>
+          </div>
+          <div>
+            <strong>WHICH COMPLETENESS FAILS?</strong>
+            <p>Deductive completeness would make T prove φ or ¬φ for every sentence φ. That is different from Gödel’s semantic completeness theorem for first-order logic.</p>
+          </div>
+          <div>
+            <strong>PROVABILITY IS NOT TRUTH</strong>
+            <p>Provability is arithmetically definable. No single arithmetical formula correctly defines truth for every arithmetical sentence; that is why the liar cannot be run through T.</p>
+          </div>
+        </div>
+
+        <section class="precision-code-table" aria-labelledby="code-table-title">
+          <p class="section-label" id="code-table-title">THE DEMONSTRATION ALPHABET</p>
+          <div>
+            <code>0↦1</code><code>S↦2</code><code>+↦3</code><code>·↦4</code>
+            <code>=↦5</code><code>¬↦6</code><code>∧↦7</code><code>∨↦8</code>
+            <code>→↦9</code><code>∀↦10</code><code>∃↦11</code><code>(↦12</code>
+            <code>)↦13</code><code>x↦14</code><code>y↦15</code><code>z↦16</code>
+          </div>
+          <p>Prime-power coding is one convenient convention among many. Nothing depends on these particular assignments.</p>
+        </section>
+
+        <section class="sources-note" aria-labelledby="sources-title">
+          <p class="section-label" id="sources-title">BIOGRAPHICAL NOTE</p>
+          <p>
+            The life-thread uses documented dates and attributed recollections. Gödel’s death
+            certificate records “malnutrition and inanition caused by personality disturbance.”
+            The fact is preserved here as history, not staged as an explanation of his mathematics.
+          </p>
+        </section>
+      </div>
+    </dialog>
+
+    <noscript>
+      <div class="noscript-message">
+        This experience needs JavaScript to animate and operate the proof machine.
+      </div>
+    </noscript>
+  </body>
+</html>
