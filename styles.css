@@ -2912,6 +2912,74 @@ body {
   font: 400 1rem/1.55 var(--serif);
 }
 
+.godel-universe {
+  position: relative;
+  z-index: 2;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0 var(--page-pad) clamp(4rem, 8vw, 8rem) clamp(5rem, 10vw, 10rem);
+}
+
+.universe-stage {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line-bright);
+  background: var(--ink);
+  box-shadow: 0 2.5rem 8rem rgba(0, 0, 0, 0.45);
+}
+
+.universe-stage video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.universe-readout {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  left: 1rem;
+  display: flex;
+  justify-content: space-between;
+  color: var(--bone-dim);
+  font: 500 0.5rem/1 var(--mono);
+  letter-spacing: 0.12em;
+  pointer-events: none;
+}
+
+.universe-readout span:last-child {
+  color: var(--ember);
+}
+
+.godel-universe figcaption {
+  max-width: 46rem;
+  margin-top: 1.2rem;
+  color: var(--bone-dim);
+  font: 400 1rem/1.55 var(--serif);
+}
+
+.godel-universe figcaption strong {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--bone);
+  font: 500 0.65rem/1 var(--mono);
+  letter-spacing: 0.12em;
+}
+
+.godel-universe .honesty-caption {
+  display: block;
+  max-width: none;
+  margin: 0.9rem 0 0;
+  padding-left: 1rem;
+}
+
+@media (max-width: 760px) {
+  .godel-universe {
+    padding-left: 2.8rem;
+  }
+}
+
 html.motion-off .room-lines p {
   position: relative;
   opacity: 1;

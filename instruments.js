@@ -738,9 +738,35 @@
     update();
   }
 
+  function setupUniverse() {
+    const video = document.getElementById("universe-video");
+    if (!video) return;
+    const status = document.getElementById("universe-status");
+    let inView = false;
+
+    function sync() {
+      const shouldPlay = inView && !map.isMotionOff() && !document.hidden;
+      if (shouldPlay) {
+        video.play().catch(() => {});
+        if (status) status.textContent = "LIGHT CONES / TIPPING";
+      } else {
+        video.pause();
+        if (status) status.textContent = map.isMotionOff() ? "LIGHT CONES / HELD" : "LIGHT CONES / PAUSED";
+      }
+    }
+
+    new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      sync();
+    }, { rootMargin: "120px" }).observe(video);
+    document.addEventListener("visibilitychange", sync);
+    map.onMotionChange(sync);
+  }
+
   setupNumbering();
   setupSyntaxTree();
   setupLifeThread();
   setupProofGrove();
   setupRoom();
+  setupUniverse();
 })();
